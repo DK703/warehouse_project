@@ -14,6 +14,13 @@ def generate_launch_description():
     #cartographer_real.lua  cartographer.lua
     configuration_basename = "cartographer_real.lua"
 
+
+    rviz_config = os.path.join(
+        get_package_share_directory('cartographer_slam'),
+        'rviz',
+        'rviz.rviz'
+    )
+
     cartographer_node = Node(
         package='cartographer_ros',
         executable='cartographer_node',
@@ -32,4 +39,4 @@ def generate_launch_description():
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
         arguments=['-resolution', '0.05', '-publish_period_sec', '1.0'])
 
-    return LaunchDescription([time_arg, cartographer_node, occupancy_grid_node])
+    return LaunchDescription([time_arg, cartographer_node, occupancy_grid_node, rviz_config])
