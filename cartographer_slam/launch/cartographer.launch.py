@@ -7,18 +7,28 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
-    cartographer_config_dir = os.path.join(
-        get_package_share_directory('cartographer_slam'), 'config')
 
-    time_arg = DeclareLaunchArgument('use_sim_time', default_value='True')
-    #cartographer_real.lua  cartographer.lua
-    configuration_basename = "cartographer_real.lua"
 
 
     rviz_config = os.path.join(
         get_package_share_directory('cartographer_slam'),
         'rviz',
-        'rviz.rviz'
+        'cartographer.rviz'
+    )
+    cartographer_config_dir = os.path.join(
+    get_package_share_directory('cartographer_slam'), 'config')
+
+    time_arg = DeclareLaunchArgument('use_sim_time', default_value='True')
+    #cartographer_real.lua  cartographer.lua
+    configuration_basename = "cartographer_real.lua"
+
+    rviz_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+        arguments=['-d', rviz_config]
     )
 
     cartographer_node = Node(
@@ -39,4 +49,4 @@ def generate_launch_description():
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
         arguments=['-resolution', '0.05', '-publish_period_sec', '1.0'])
 
-    return LaunchDescription([time_arg, cartographer_node, occupancy_grid_node, rviz_config])
+    return LaunchDescription([time_arg, cartographer_node, occupancy_grid_node, rviz_node])
