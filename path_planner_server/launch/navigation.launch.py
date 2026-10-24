@@ -61,7 +61,7 @@ def generate_launch_description():
     map_file = PathJoinSubstitution([path_config_dir_map,PythonExpression(["'warehouse_map_sim.yaml' if (", bool_checker, ") else 'warehouse_map_real.yaml'"])])
     #file_arg = DeclareLaunchArgument('map_file', default_value='warehouse_map_sim.yaml')
 
-    
+    # footprint: '[[0.325, 0.325], [0.325, -0.325], [-0.325, -0.325], [-0.325, 0.325]]'
 
     map_server_node = Node(
             package='nav2_map_server',
