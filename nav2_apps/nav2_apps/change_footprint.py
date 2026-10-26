@@ -59,7 +59,7 @@ class Change_Footprint(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = Change_Footprint()
-    node.send_request('[[0.8, 0.8], [0.8, -0.8], [-0.8, -0.8], [-0.8, 0.8]]')
+    node.send_request('[[0.5, 0.5], [0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5]]')
     node.destroy_node()
     rclpy.shutdown()
 if __name__ == "__main__":

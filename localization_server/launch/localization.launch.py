@@ -9,11 +9,11 @@ from launch_ros.descriptions import ParameterValue
 
 def generate_launch_description():
 
-    file_arg = DeclareLaunchArgument('map_file', default_value='warehouse_map_sim.yaml')
+    file_arg = DeclareLaunchArgument('map_file', default_value='warehouse_map_keepout_sim.yaml')
     map_file_cfg = LaunchConfiguration('map_file')
 
    
-    bool_checker = PythonExpression(["'", map_file_cfg, "' == 'warehouse_map_sim.yaml'"])
+    bool_checker = PythonExpression(["'", map_file_cfg, "' == 'warehouse_map_keepout_sim.yaml'"])
     proper_time_arg = ParameterValue(bool_checker, value_type=bool)
 
 
@@ -21,7 +21,7 @@ def generate_launch_description():
     map_file = PathJoinSubstitution([
         get_package_share_directory('map_server'),
         'config',
-        map_file_cfg
+        "warehouse_map_sim.yaml"
     ])
 
 
@@ -71,4 +71,4 @@ def generate_launch_description():
             output='screen'
         )
 
-    return LaunchDescription([file_arg, nav2_map_node, nav2_amcl_node, nav2_lifecycle_manager_node,rviz_node])
+    return LaunchDescription([file_arg, nav2_map_node, nav2_amcl_node, nav2_lifecycle_manager_node])

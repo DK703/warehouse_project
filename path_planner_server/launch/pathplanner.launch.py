@@ -67,7 +67,7 @@ def generate_launch_description():
 
     # footprint: '[[0.325, 0.325], [0.325, -0.325], [-0.325, -0.325], [-0.325, 0.325]]'
 
-    map_server_node = Node(
+    '''map_server_node = Node(
             package='nav2_map_server',
             executable='map_server',
             name='map_server',
@@ -81,7 +81,7 @@ def generate_launch_description():
             name='amcl',
             output='screen',
             parameters=[nav2_yaml, {'use_sim_time': proper_time_arg}]
-        )
+        )'''
 
     #path planner stuff
     controller_node = Node(
@@ -131,8 +131,7 @@ def generate_launch_description():
             name='lifecycle_manager_pathplanner',
             output='screen',
             parameters=[{'autostart': True},
-                        {'node_names': ['map_server',
-                                        'amcl',
+                        {'node_names': [
                                         'planner_server',
                                         'controller_server',
                                         'recoveries_server',
@@ -153,4 +152,4 @@ def generate_launch_description():
 
 
    
-    return LaunchDescription([time_arg, map_server_node, nav2_amcl_node, controller_node, nav2_planner_node,behavior_node, nav2_bt_navigator_node, nav2_lifecycle_manager_node, rviz_node,filter_mask_node,costmap_filter_node])
+    return LaunchDescription([time_arg, controller_node, nav2_planner_node,behavior_node, nav2_bt_navigator_node, nav2_lifecycle_manager_node, rviz_node,filter_mask_node,costmap_filter_node])
