@@ -24,6 +24,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'change_footprint = nav2_apps.change_footprint:main',
         ],
     },
 )

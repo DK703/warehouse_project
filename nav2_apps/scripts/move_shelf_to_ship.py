@@ -27,6 +27,7 @@ from std_msgs.msg import String
 from rclpy.parameter import Parameter
 from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg import Parameter, ParameterValue, ParameterType
+from nav2_apps.change_footprint import Change_Footprint
 '''
 Basic security route patrol demo. In this demonstration, the expectation
 is that there are security cameras mounted on the robots recording or being
@@ -61,6 +62,8 @@ loading_positions = {
 }
 
 
+
+
 def spin_robot(publisher, angle, speed=0.5):
     
     cmd = Twist()
@@ -81,7 +84,7 @@ def spin_robot(publisher, angle, speed=0.5):
 def move_forward(publisher, speed=0.5):
     cmd = Twist()
     cmd.linear.x = 0.0
-    duration = 2.5
+    duration = 3.5
     start = time.time()
     cmd.linear.x = speed
 
@@ -178,11 +181,17 @@ def main():
     #begin moving to shipping
 
 
-    #msg = String()
-    #msg.data = ''  # empty string to trigger elevator
-    #elevator_up_publisher.publish(msg)
+    msg = String()
+    msg.data = ''  # empty string to trigger elevator
+    elevator_up_publisher.publish(msg)
+    elevator_up_publisher.publish(msg)
+    elevator_up_publisher.publish(msg)
     large_footprint = '[[0.5, 0.5], [0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5]]'
     #change_footprint(navigator, large_footprint)
+    footprint_node = Change_Footprint()
+    ok = footprint_node.send_request(large_footprint)
+    if not ok:
+        print('footprint change failed')
 
     
     '''
@@ -210,10 +219,10 @@ def change_footprint(navigator, footprint):
 
     '''
     time.sleep(2)  
-    #navigator.clearAllCostmaps()
+    navigator.clearAllCostmaps()
     #time.sleep(5)
 
-    '''
+    
 
 
     shipping_pose = PoseStamped()
@@ -249,7 +258,7 @@ def change_footprint(navigator, footprint):
         print('Task failed!, ink bomb explosion noised')
         exit(-1)
     while not navigator.isTaskComplete():
-        pass '''
+        pass 
     
     exit(0)
 
