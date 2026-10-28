@@ -55,11 +55,11 @@ shipping_destinations = {
 #i dont know if I need multiple shipping and multiple loading positions, this is just for future-proofing
 
 shipping_positions = {
-    "ship_A": [2.20,0.98]
+    "ship_A": [2.10,0.98]
 }
 
 loading_positions = {
-    "load_A": [6.4,-0.45]
+    "load_A": [6.5,-0.45]
 }
 
 
@@ -183,6 +183,9 @@ def main():
         pass
     
     #begin moving to shipping
+    print('print amcl')
+    time.sleep(3)
+
 
 
     msg = String()
@@ -191,7 +194,9 @@ def main():
     elevator_up_publisher.publish(msg)
     elevator_up_publisher.publish(msg)
     large_footprint = '[[0.45,0.45], [0.45, -0.45], [-0.45, -0.45], [-0.45,0.45]]'
-    change_footprint(navigator, large_footprint)
+    #change_footprint(navigator, large_footprint)
+    print('print amcl')
+    time.sleep(3)
     footprint_node = Change_Footprint()
     ok = footprint_node.send_request(large_footprint)
     if not ok:
@@ -224,7 +229,8 @@ def change_footprint(navigator, footprint):
     '''
     time.sleep(2)  
     navigator.clearAllCostmaps()
-    #time.sleep(5)
+    print('print amcl')
+    time.sleep(2)
 
     
 
