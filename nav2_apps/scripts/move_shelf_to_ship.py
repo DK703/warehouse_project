@@ -96,25 +96,7 @@ def move_forward(publisher, speed=0.5):
     publisher.publish(cmd)
 
 
-def change_footprint(navigator, footprint):
-    for service_name in [
-        '/local_costmap/local_costmap/set_parameters',
-        '/global_costmap/global_costmap/set_parameters'
-    ]:
-        client = navigator.create_client(SetParameters, service_name)
-        client.wait_for_service()
-        
-        request = SetParameters.Request()
-        param_value = ParameterValue(
-            type=ParameterType.PARAMETER_STRING,
-            string_value=footprint
-        )
-        request.parameters = [
-            Parameter(name='footprint', value=param_value)
-        ]
-        future = client.call_async(request)
-        rclpy.spin_until_future_complete(navigator, future)
-    time.sleep(1)
+
 
 
 def main():
@@ -202,31 +184,8 @@ def main():
     if not ok:
         print('footprint change failed')
 
-    
-    '''
-    
 
-def change_footprint(navigator, footprint):
-    for service_name in [
-        '/local_costmap/local_costmap/set_parameters',
-        '/global_costmap/global_costmap/set_parameters'
-    ]:
-        client = navigator.create_client(SetParameters, service_name)
-        client.wait_for_service()
-        
-        request = SetParameters.Request()
-        param_value = ParameterValue(
-            type=ParameterType.PARAMETER_STRING,
-            string_value=footprint
-        )
-        request.parameters = [
-            Parameter(name='footprint', value=param_value)
-        ]
-        future = client.call_async(request)
-        rclpy.spin_until_future_complete(navigator, future)
-    time.sleep(1)
 
-    '''
     time.sleep(2)  
     navigator.clearAllCostmaps()
     print('print amcl')
