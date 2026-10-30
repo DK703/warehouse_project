@@ -27,6 +27,8 @@ from std_msgs.msg import String
 from rclpy.parameter import Parameter
 from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg import Parameter, ParameterValue, ParameterType
+from nav2_apps.change_footprint import Change_Footprint
+from rclpy.parameter import Parameter as RosParameter
 '''
 Basic security route patrol demo. In this demonstration, the expectation
 is that there are security cameras mounted on the robots recording or being
@@ -53,15 +55,17 @@ shipping_destinations = {
 #i dont know if I need multiple shipping and multiple loading positions, this is just for future-proofing
 
 shipping_positions = {
-    "ship_A": [2.20,0.98]
+    "ship_A": [2.10,0.98]
 }
 
 loading_positions = {
-    "load_A": [6.3,-0.45]
+    "load_A": [6.5,-0.45]
 }
 
 
-def spin_robot(publisher, angle, speed=0.5):
+
+
+def spin_robot(publisher, angle, speed=0.55):
     
     cmd = Twist()
     cmd.linear.x = 0.0
@@ -81,7 +85,7 @@ def spin_robot(publisher, angle, speed=0.5):
 def move_forward(publisher, speed=0.5):
     cmd = Twist()
     cmd.linear.x = 0.0
-    duration = 2.5
+    duration = 4.8
     start = time.time()
     cmd.linear.x = speed
 
@@ -92,25 +96,7 @@ def move_forward(publisher, speed=0.5):
     publisher.publish(cmd)
 
 
-def change_footprint(navigator, footprint):
-    for service_name in [
-        '/local_costmap/local_costmap/set_parameters',
-        '/global_costmap/global_costmap/set_parameters'
-    ]:
-        client = navigator.create_client(SetParameters, service_name)
-        client.wait_for_service()
-        
-        request = SetParameters.Request()
-        param_value = ParameterValue(
-            type=ParameterType.PARAMETER_STRING,
-            string_value=footprint
-        )
-        request.parameters = [
-            Parameter(name='footprint', value=param_value)
-        ]
-        future = client.call_async(request)
-        rclpy.spin_until_future_complete(navigator, future)
-    time.sleep(1)
+
 
 
 def main():
@@ -123,6 +109,9 @@ def main():
     rclpy.init()
 
     navigator = BasicNavigator()
+    #temp fix
+    navigator.set_parameters([RosParameter('use_sim_time', RosParameter.Type.BOOL, True)])
+    
     cmd_vel_pub = navigator.create_publisher(Twist, '/cmd_vel', 10)
     elevator_up_publisher = navigator.create_publisher(String, '/elevator_up', 10)
 
@@ -176,44 +165,33 @@ def main():
         pass
     
     #begin moving to shipping
+    print('print amcl')
+    time.sleep(3)
 
 
-    #msg = String()
-    #msg.data = ''  # empty string to trigger elevator
-    #elevator_up_publisher.publish(msg)
-    large_footprint = '[[0.5, 0.5], [0.5, -0.5], [-0.5, -0.5], [-0.5, 0.5]]'
+
+    msg = String()
+    msg.data = ''  # empty string to trigger elevator
+    elevator_up_publisher.publish(msg)
+    elevator_up_publisher.publish(msg)
+    elevator_up_publisher.publish(msg)
+    large_footprint = '[[0.45,0.45], [0.45, -0.45], [-0.45, -0.45], [-0.45,0.45]]'
     #change_footprint(navigator, large_footprint)
+    print('print amcl')
+    time.sleep(3)
+    footprint_node = Change_Footprint()
+    ok = footprint_node.send_request(large_footprint)
+    if not ok:
+        print('footprint change failed')
 
-    
-    '''
-    
 
-def change_footprint(navigator, footprint):
-    for service_name in [
-        '/local_costmap/local_costmap/set_parameters',
-        '/global_costmap/global_costmap/set_parameters'
-    ]:
-        client = navigator.create_client(SetParameters, service_name)
-        client.wait_for_service()
-        
-        request = SetParameters.Request()
-        param_value = ParameterValue(
-            type=ParameterType.PARAMETER_STRING,
-            string_value=footprint
-        )
-        request.parameters = [
-            Parameter(name='footprint', value=param_value)
-        ]
-        future = client.call_async(request)
-        rclpy.spin_until_future_complete(navigator, future)
-    time.sleep(1)
 
-    '''
     time.sleep(2)  
-    #navigator.clearAllCostmaps()
-    #time.sleep(5)
+    navigator.clearAllCostmaps()
+    print('print amcl')
+    time.sleep(2)
 
-    '''
+    
 
 
     shipping_pose = PoseStamped()
@@ -249,7 +227,7 @@ def change_footprint(navigator, footprint):
         print('Task failed!, ink bomb explosion noised')
         exit(-1)
     while not navigator.isTaskComplete():
-        pass '''
+        pass 
     
     exit(0)
 

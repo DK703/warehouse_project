@@ -9,20 +9,27 @@ from launch_ros.descriptions import ParameterValue
 
 def generate_launch_description():
 
-    file_arg = DeclareLaunchArgument('map_file', default_value='warehouse_map_sim.yaml')
+    file_arg = DeclareLaunchArgument('map_file', default_value='warehouse_map_keepout_sim.yaml')
     map_file_cfg = LaunchConfiguration('map_file')
 
    
-    bool_checker = PythonExpression(["'", map_file_cfg, "' == 'warehouse_map_sim.yaml'"])
+    bool_checker = PythonExpression(["'", map_file_cfg, "' == 'warehouse_map_keepout_sim.yaml'"])
     proper_time_arg = ParameterValue(bool_checker, value_type=bool)
 
+        #dynamic path selection for the proper map
+
+    path_pkg_share_map = FindPackageShare("map_server")
+    path_config_dir_map = PathJoinSubstitution([path_pkg_share_map, 'config'])
 
 
-    map_file = PathJoinSubstitution([
-        get_package_share_directory('map_server'),
-        'config',
-        map_file_cfg
-    ])
+
+    #map_file = PathJoinSubstitution([
+    #    get_package_share_directory('map_server'),
+    #    'config',
+    #    "warehouse_map_sim.yaml"
+    #])
+
+    map_file = PathJoinSubstitution([path_config_dir_map,PythonExpression(["'warehouse_map_sim.yaml' if (", bool_checker, ") else 'warehouse_map_real.yaml'"])])
 
 
     path_pkg_share_localization = FindPackageShare("localization_server")
@@ -71,4 +78,4 @@ def generate_launch_description():
             output='screen'
         )
 
-    return LaunchDescription([file_arg, nav2_map_node, nav2_amcl_node, nav2_lifecycle_manager_node,rviz_node])
+    return LaunchDescription([file_arg, nav2_map_node, nav2_amcl_node, nav2_lifecycle_manager_node])
